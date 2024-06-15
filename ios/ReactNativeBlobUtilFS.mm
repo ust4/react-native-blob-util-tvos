@@ -679,7 +679,7 @@ typedef enum {
         return;
     }
 
-    while ((dataChunk = [fileHandle readDataUpToLength:chunkSize error:&error])) {
+    while ((dataChunk = [fileHandle readDataUpToLength:chunkSize error:&error]) && dataChunk.length > 0) {
         if (error) {
             return reject(@"EREAD", [NSString stringWithFormat:@"Error reading file '%@'", path], error);
             break;
