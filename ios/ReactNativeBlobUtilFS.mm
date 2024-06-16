@@ -679,31 +679,41 @@ typedef enum {
         return;
     }
 
-    while ((dataChunk = [fileHandle readDataUpToLength:chunkSize error:&error]) && dataChunk.length > 0) {
-        if (error) {
-            return reject(@"EREAD", [NSString stringWithFormat:@"Error reading file '%@'", path], error);
-            break;
-        }
-        
-        switch(hashAlgorithm) {
-            case HashAlgorithmMD5:
-                CC_MD5_Update(&md5Context, [dataChunk bytes], CC_LONG([dataChunk length]));
+    while (true) {
+        @autoreleasepool {
+            dataChunk = [fileHandle readDataUpToLength:chunkSize error:&error];
+
+            if (error) {
+                return reject(@"EREAD", [NSString stringWithFormat:@"Error reading file '%@'", path], error);
                 break;
-            case HashAlgorithmSHA1:
-                CC_SHA1_Update(&sha1Context, [dataChunk bytes], CC_LONG([dataChunk length]));
+            }
+            
+            if (dataChunk == nil || dataChunk.length == 0) {
                 break;
-            case HashAlgorithmSHA224:
-                CC_SHA224_Update(&sha256Context, [dataChunk bytes], CC_LONG([dataChunk length]));
-                break;
-            case HashAlgorithmSHA256:
-                CC_SHA256_Update(&sha256Context, [dataChunk bytes], CC_LONG([dataChunk length]));
-                break;
-            case HashAlgorithmSHA384:
-                CC_SHA384_Update(&sha512Context, [dataChunk bytes], CC_LONG([dataChunk length]));
-                break;
-            case HashAlgorithmSHA512:
-                CC_SHA512_Update(&sha512Context, [dataChunk bytes], CC_LONG([dataChunk length]));
-                break;
+            }
+            
+            switch(hashAlgorithm) {
+                case HashAlgorithmMD5:
+                    CC_MD5_Update(&md5Context, [dataChunk bytes], CC_LONG([dataChunk length]));
+                    break;
+                case HashAlgorithmSHA1:
+                    CC_SHA1_Update(&sha1Context, [dataChunk bytes], CC_LONG([dataChunk length]));
+                    break;
+                case HashAlgorithmSHA224:
+                    CC_SHA224_Update(&sha256Context, [dataChunk bytes], CC_LONG([dataChunk length]));
+                    break;
+                case HashAlgorithmSHA256:
+                    CC_SHA256_Update(&sha256Context, [dataChunk bytes], CC_LONG([dataChunk length]));
+                    break;
+                case HashAlgorithmSHA384:
+                    CC_SHA384_Update(&sha512Context, [dataChunk bytes], CC_LONG([dataChunk length]));
+                    break;
+                case HashAlgorithmSHA512:
+                    CC_SHA512_Update(&sha512Context, [dataChunk bytes], CC_LONG([dataChunk length]));
+                    break;
+            }
+            
+            dataChunk = nil;
         }
     }
 
