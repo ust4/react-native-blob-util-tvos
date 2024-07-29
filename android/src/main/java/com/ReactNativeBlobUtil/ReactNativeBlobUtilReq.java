@@ -24,6 +24,7 @@ import androidx.annotation.NonNull;
 import com.ReactNativeBlobUtil.Response.ReactNativeBlobUtilDefaultResp;
 import com.ReactNativeBlobUtil.Response.ReactNativeBlobUtilFileResp;
 import com.ReactNativeBlobUtil.Utils.Tls12SocketFactory;
+import com.ReactNativeBlobUtil.ReactNativeBlobUtilFS;
 import com.facebook.common.logging.FLog;
 import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.Callback;
@@ -32,6 +33,7 @@ import com.facebook.react.bridge.ReadableMap;
 import com.facebook.react.bridge.ReadableMapKeySetIterator;
 import com.facebook.react.bridge.WritableArray;
 import com.facebook.react.bridge.WritableMap;
+import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.modules.core.DeviceEventManagerModule;
 
 import java.io.File;
@@ -234,6 +236,7 @@ public class ReactNativeBlobUtilReq extends BroadcastReceiver implements Runnabl
 
     @Override
     public void run() {
+        Context appCtx = ReactNativeBlobUtilImpl.RCTContext.getApplicationContext();
 
         // use download manager instead of default HTTP implementation
         if (options.addAndroidDownloads != null && options.addAndroidDownloads.hasKey("useDownloadManager")) {
@@ -253,14 +256,48 @@ public class ReactNativeBlobUtilReq extends BroadcastReceiver implements Runnabl
                     req.setDescription(options.addAndroidDownloads.getString("description"));
                 }
                 if (options.addAndroidDownloads.hasKey("path")) {
-                    req.setDestinationUri(Uri.parse("file://" + options.addAndroidDownloads.getString("path")));
+                    String path = options.addAndroidDownloads.getString("path");
+                    File f = new File(path);
+                    File dir = f.getParentFile();
+
+                if (!f.exists()) {
+                    if (dir != null && !dir.exists()) {
+                        if (!dir.mkdirs() && !dir.exists()) {
+                            invoke_callback( "Failed to create parent directory of '" + path + "'", null, null);
+                            return;
+                        }
+                    }
                 }
+                    req.setDestinationUri(Uri.parse("file://" + path));
+                }
+
+
+                if (options.addAndroidDownloads.hasKey("storeLocal") && options.addAndroidDownloads.getBoolean("storeLocal")) {
+                    String path = (String) ReactNativeBlobUtilFS.getSystemfolders((ReactApplicationContext) appCtx).get("DownloadDir");
+                    path = path + UUID.randomUUID().toString();
+
+                    File f = new File(path);
+                    File dir = f.getParentFile();
+
+                    if (!f.exists()) {
+                        if (dir != null && !dir.exists()) {
+                            if (!dir.mkdirs() && !dir.exists()) {
+                                invoke_callback( "Failed to create parent directory of '" + path + "'", null, null);
+                                return;
+                            }
+                        }
+                    }
+                    req.setDestinationUri(Uri.parse("file://" + path));
+                }
+
                 if (options.addAndroidDownloads.hasKey("mime")) {
                     req.setMimeType(options.addAndroidDownloads.getString("mime"));
                 }
+
                 if (options.addAndroidDownloads.hasKey("mediaScannable") && options.addAndroidDownloads.getBoolean("mediaScannable")) {
                     req.allowScanningByMediaScanner();
                 }
+
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q && options.addAndroidDownloads.hasKey("storeInDownloads") && options.addAndroidDownloads.getBoolean("storeInDownloads")) {
                     String t = options.addAndroidDownloads.getString("title");
                     if(t == null || t.isEmpty())
@@ -288,7 +325,7 @@ public class ReactNativeBlobUtilReq extends BroadcastReceiver implements Runnabl
                 } catch (MalformedURLException e) {
                     e.printStackTrace();
                 }
-                Context appCtx = ReactNativeBlobUtilImpl.RCTContext.getApplicationContext();
+
                 DownloadManager dm = (DownloadManager) appCtx.getSystemService(Context.DOWNLOAD_SERVICE);
                 downloadManagerId = dm.enqueue(req);
                 androidDownloadManagerTaskTable.put(taskId, Long.valueOf(downloadManagerId));

@@ -771,7 +771,7 @@ export interface AddAndroidDownloads {
      */
     description?: string;
     /**
-     * The destination which the file will be downloaded, it SHOULD be a location on external storage (DCIMDir).
+     * The destination which the file will be downloaded, it SHOULD be a location on external storage (DCIMDir). CacheDir and DocumentDir don't work
      */
     path?: string;
     /**
@@ -791,6 +791,11 @@ export interface AddAndroidDownloads {
      * A boolean value decide whether show a notification when download complete.
      */
     notification?: boolean;
+
+    /**
+     * If true android download manager will try to save the file to the apps Download direcotry
+     */
+    storeLocal?: boolean
 }
 
 export interface ReactNativeBlobUtilResponseInfo {
