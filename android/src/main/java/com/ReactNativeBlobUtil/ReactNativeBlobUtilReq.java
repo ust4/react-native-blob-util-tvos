@@ -116,6 +116,7 @@ public class ReactNativeBlobUtilReq extends BroadcastReceiver implements Runnabl
     String url;
     String rawRequestBody;
     String destPath;
+    String customPath;
     ReadableArray rawRequestBodyArray;
     ReadableMap headers;
     Callback callback;
@@ -237,7 +238,10 @@ public class ReactNativeBlobUtilReq extends BroadcastReceiver implements Runnabl
     @Override
     public void run() {
         Context appCtx = ReactNativeBlobUtilImpl.RCTContext.getApplicationContext();
-
+        String t123 =  String.valueOf(options.addAndroidDownloads.hasKey("storeLocal"));
+        String t1234 =  String.valueOf(options.addAndroidDownloads.getBoolean("storeLocal"));
+        RNLog.w(ReactNativeBlobUtilImpl.RCTContext, t123);
+        RNLog.w(ReactNativeBlobUtilImpl.RCTContext, t1234);
         // use download manager instead of default HTTP implementation
         if (options.addAndroidDownloads != null && options.addAndroidDownloads.hasKey("useDownloadManager")) {
 
@@ -269,16 +273,18 @@ public class ReactNativeBlobUtilReq extends BroadcastReceiver implements Runnabl
                     }
                 }
                     req.setDestinationUri(Uri.parse("file://" + path));
+
+                    customPath = path;
                 }
 
 
                 if (options.addAndroidDownloads.hasKey("storeLocal") && options.addAndroidDownloads.getBoolean("storeLocal")) {
-                    String path = (String) ReactNativeBlobUtilFS.getSystemfolders((ReactApplicationContext) appCtx).get("DownloadDir");
+                    RNLog.w(ReactNativeBlobUtilImpl.RCTContext, "a");
+                    String path = (String) ReactNativeBlobUtilFS.getSystemfolders(ReactNativeBlobUtilImpl.RCTContext).get("DownloadDir");
                     path = path + UUID.randomUUID().toString();
 
                     File f = new File(path);
                     File dir = f.getParentFile();
-
                     if (!f.exists()) {
                         if (dir != null && !dir.exists()) {
                             if (!dir.mkdirs() && !dir.exists()) {
@@ -288,6 +294,7 @@ public class ReactNativeBlobUtilReq extends BroadcastReceiver implements Runnabl
                         }
                     }
                     req.setDestinationUri(Uri.parse("file://" + path));
+                    customPath = path;
                 }
 
                 if (options.addAndroidDownloads.hasKey("mime")) {
@@ -333,7 +340,7 @@ public class ReactNativeBlobUtilReq extends BroadcastReceiver implements Runnabl
                     appCtx.registerReceiver(this, new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE), Context.RECEIVER_EXPORTED);
                 }else{
                     appCtx.registerReceiver(this, new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE));
-                }                
+                }
                 future = scheduledExecutorService.scheduleAtFixedRate(new Runnable() {
                     @Override
                     public void run() {
@@ -952,9 +959,9 @@ public class ReactNativeBlobUtilReq extends BroadcastReceiver implements Runnabl
                 }
 
                 // When the file is not found in media content database, check if custom path exists
-                if (options.addAndroidDownloads.hasKey("path")) {
+                if (options.addAndroidDownloads.hasKey("path") || options.addAndroidDownloads.hasKey("storeLocal")) {
                     try {
-                        String customDest = options.addAndroidDownloads.getString("path");
+                        String customDest = customPath;
                         boolean exists = new File(customDest).exists();
                         if (!exists)
                             throw new Exception("Download manager download failed, the file does not downloaded to destination.");

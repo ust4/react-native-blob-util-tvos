@@ -779,7 +779,7 @@ export interface AddAndroidDownloads {
      */
     mime?: string;
     /**
-     * A boolean value, see Officail Document
+     * A boolean value, see Official Document
      * (https://developer.android.com/reference/android/app/DownloadManager.html#addCompletedDownload(java.lang.String, java.lang.String, boolean, java.lang.String, java.lang.String, long, boolean))
      */
     mediaScannable?: boolean;
