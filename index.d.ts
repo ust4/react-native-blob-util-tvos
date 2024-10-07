@@ -448,7 +448,7 @@ export interface FS {
 
     dirs: Dirs;
 
-    slice(src: string, dest: string, start: number, end: number): Promise<void>;
+    slice(src: string, dest: string, start: number, end: number): Promise<string>;
 
     asset(path: string): string;
 
