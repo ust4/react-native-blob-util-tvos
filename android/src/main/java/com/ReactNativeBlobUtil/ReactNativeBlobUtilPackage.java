@@ -2,7 +2,7 @@ package com.ReactNativeBlobUtil;
 
 import androidx.annotation.Nullable;
 
-import com.facebook.react.TurboReactPackage;
+import com.facebook.react.BaseReactPackage;
 import com.facebook.react.bridge.NativeModule;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.module.model.ReactModuleInfo;
@@ -11,7 +11,7 @@ import com.facebook.react.module.model.ReactModuleInfoProvider;
 import java.util.HashMap;
 import java.util.Map;
 
-public class ReactNativeBlobUtilPackage extends TurboReactPackage {
+public class ReactNativeBlobUtilPackage extends BaseReactPackage {
 
     @Nullable
     @Override
@@ -35,7 +35,6 @@ public class ReactNativeBlobUtilPackage extends TurboReactPackage {
                             ReactNativeBlobUtilImpl.NAME,
                             false, // canOverrideExistingModule
                             false, // needsEagerInit
-                            true, // hasConstants
                             false, // isCxxModule
                             isTurboModule // isTurboModule
                     ));
