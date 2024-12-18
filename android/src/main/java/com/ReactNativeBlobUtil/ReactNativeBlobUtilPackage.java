@@ -11,6 +11,8 @@ import com.facebook.react.module.model.ReactModuleInfoProvider;
 import java.util.HashMap;
 import java.util.Map;
 
+// trick autolinking till it is fixed on RN side
+//public class ReactNativeBlobUtilPackage extends TurboReactPackage {
 public class ReactNativeBlobUtilPackage extends BaseReactPackage {
 
     @Nullable
