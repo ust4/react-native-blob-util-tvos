@@ -631,22 +631,13 @@ This is a new feature added in `0.9.0` if you're going to open a file path using
 
 Download and install an APK programmatically
 
-Note:
-be sure to specify the path, do not use the default path, because the permission problem causes the installation to fail, parsing the package fails
-
-default path: `/data/data/com.android.providers.downloads/cache/xxx.apk`   // Will cause parsing of the package to fail，Unable to install APK
-
 ```js
 
 const android = ReactNativeBlobUtil.android
-const dirs = ReactNativeBlobUtil.fs.dirs;
-const apkUrl = "http://www.example.com/awesome.apk";    
-const fileName = url.substring(url.lastIndexOf('/') + 1);
 
 ReactNativeBlobUtil.config({
     addAndroidDownloads: {
         useDownloadManager: true,
-        path: `${dirs.DownloadDir}/${fileName}`,    // <-- Must specify
         title: 'awesome.apk',
         description: 'An APK that will be installed',
         mime: 'application/vnd.android.package-archive',
