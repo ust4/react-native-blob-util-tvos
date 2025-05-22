@@ -16,7 +16,7 @@ Pod::Spec.new do |s|
   s.resource_bundles = {
     'ReactNativeBlobUtilPrivacyInfo' => ['ios/PrivacyInfo.xcprivacy'],
   }
-  s.platforms       = { :ios => "11.0" }
+  s.platforms       = { :ios => "11.0", :tvos => "11.0" }
   s.framework    = 'AssetsLibrary'
 
   if fabric_enabled

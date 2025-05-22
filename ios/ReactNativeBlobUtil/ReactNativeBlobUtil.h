@@ -4,13 +4,10 @@
 //  Created by wkh237 on 2016/4/28.
 //
 
-//XXX: DO NO REMOVE THIS LINE IF YOU'RE USING IT ON RN > 0.40 PROJECT
-
-
+// XXX: DO NO REMOVE THIS LINE IF YOU'RE USING IT ON RN > 0.40 PROJECT
 
 #ifndef ReactNativeBlobUtil_h
 #define ReactNativeBlobUtil_h
-
 
 #if __has_include(<React/RCTAssert.h>)
 #import <React/RCTLog.h>
@@ -32,18 +29,19 @@
 #import <ReactNativeBlobUtilSpec/ReactNativeBlobUtilSpec.h>
 #endif
 
+#if !TARGET_OS_TV
+@interface ReactNativeBlobUtil : RCTEventEmitter <RCTBridgeModule, UIDocumentInteractionControllerDelegate>
+{
 
-@interface ReactNativeBlobUtil : RCTEventEmitter <RCTBridgeModule, UIDocumentInteractionControllerDelegate> {
-
-    NSString * filePathPrefix;
-
+    NSString *filePathPrefix;
 }
+#endif
 
-@property (nonatomic) NSString * filePathPrefix;
-@property (retain) UIDocumentInteractionController * documentController;
+@property(nonatomic) NSString *filePathPrefix;
+@property(retain) UIDocumentInteractionController *documentController;
 
--(void) emitEvent:(NSString *)name body:(NSString *) body;
--(void) emitEventDict:(NSString *)name body:(NSDictionary *) body;
+- (void)emitEvent:(NSString *)name body:(NSString *)body;
+- (void)emitEventDict:(NSString *)name body:(NSDictionary *)body;
 
 @end
 

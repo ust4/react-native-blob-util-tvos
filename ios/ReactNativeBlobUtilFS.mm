@@ -11,7 +11,10 @@
 #import "ReactNativeBlobUtilFS.h"
 #import "ReactNativeBlobUtilConst.h"
 #import "ReactNativeBlobUtilFileTransformer.h"
+
+#if !TARGET_OS_TV
 #import <AssetsLibrary/AssetsLibrary.h>
+#endif
 
 #import <CommonCrypto/CommonDigest.h>
 
